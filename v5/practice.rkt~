@@ -1,0 +1,72 @@
+#lang racket
+;; this code defines the sim-OAZO5 language as a module
+(module sim-OAZO5 racket
+  (provide
+   [rename-out (#%lam-app #%app)
+               (my-if if)
+               (my-let let)]
+   else
+   #%module-begin
+   #%datum
+   + - * / = equal? <= =>
+   true false)
+ 
+  (define-syntax (#%lam-app stx)
+    (syntax-case stx (anon)
+      [(_ anon (args ...) : body)
+       #'(lambda (args ...) body)]
+      [(_ e ...)
+       #'(#%app e ...)]))
+ 
+  (define-syntax (my-if stx)
+    (syntax-case stx (then else)
+      [(_ e1 then e2 else e3)
+       #'(if e1 e2 e3)]))
+ 
+  (define-syntax my-let
+    (syntax-rules ()
+      [(let [x <- e] ... eb)
+       ((lambda (x ...) eb) e ...)])))
+ 
+ 
+;; this module uses the sim-OAZO5 language. That is, its
+;; contents are written *in* the sim-OAZO5 language.
+;; the only edits you should make are inside this module:
+(module my-mod1 (submod ".." sim-OAZO5)
+ 
+  1234
+ 
+  4567
+ 
+  (+ 4 5)
+ 
+  {let [z <- {+ 9 14}]
+      [y <- 98]
+      {+ z y}}
+ 
+  ;; exercise 0: Give the name `f` to the function that
+  ;; accepts an argument `x` and computes x^2 + 4x + 4.
+  ;; apply `f` to seven.
+ 
+  ;; exercise 1: Use the trick discussed in class to define
+  ;; a `fact` function that computes the factorial of a given
+  ;; number. Use it to compute the factorial of 12.
+ 
+  ;; exercise 2: Define a 'pow' function that accepts a base
+  ;; and a (natural number) exponent, and computes the base to
+  ;; the power of the exponent. Don't worry about non-natural
+  ;; number exponents (6^1.5, 5^-4).
+ 
+  ;; exercise 3: use `fact` and `pow` to build a "sin" function
+  ;; that accepts a number x and a number of terms `n`, and computes
+  ;; (sin x) using `n` terms of the taylor expansion. (Note that
+  ;; this is a little ambigious; do zero-coefficient terms count?
+  ;; You can go either way on this.) Use this function to compute
+  ;; the sine of 1 radian to an error of no more than ten to the minus
+  ;; 30th.
+ 
+  )
+ 
+;; this code actually invokes the 'my-mod1 module, so that the
+;; code runs.
+(require 'my-mod1)

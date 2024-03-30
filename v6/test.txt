@@ -1,0 +1,57 @@
+
+{seq
+ {println ""}
+ {println "~~~ Welcome to your virtual golf score card ~~~"}
+ {println "Enter each hole's par and hits, and we will calculate your score"}
+ {seq
+  {println "How many holes did you play?"}
+  {let [num_holes <- {read-num}]
+    {let [golf <- {anon {self hole par score} :
+                        {if {<= hole num_holes}
+                            then {seq
+                                  {println ""}
+                                  {println (++ "----- HOLE: " hole " -----")}
+                                  {println "What was the par?"}
+                                  {let [p <- {read-num}]
+                                    {seq
+                                     {println (++ "How did you hit?")}
+                                     {let [s <- {read-num}]
+                                       {seq
+                                        {if {equal? 0 (- s p)}
+                                            then {println "Par, nice!"}
+                                            else {if {equal? -1 (- s p)}
+                                                     then {println "Birdie!"}
+                                                     else {if {equal? -2 (- s p)}
+                                                              then {println "Eagle! Woohoo!"}
+                                                              else {if {equal? 1 {- s p}}
+                                                                       then {println "Bogie, pretty good"}
+                                                                       else {if {equal? 2 {- s p}}
+                                                                                then {println "Double bogie, keep working"}
+                                                                                else {if {equal? 1 s}
+                                                                                         then {println "HOLE IN ONE!"}
+                                                                                         else { if {<= 3 {- p s}}
+                                                                                                   then {println "I think you're lying..."}
+                                                                                                   else {println "You suck..."}}}}}}}}
+
+                                        {println ""}
+                                        {self self {+ hole 1} {+ p par} {+ s score}}}}}}
+                                  }
+                            else {seq
+                                  {if {equal? 0 (- score par)}
+                                      then {println {++ "You shot even! Wow! Give your caddie a raise!"}}
+                                      else {if {<= 0 (- par score)}
+                                               then {println {++ "You shot " (- par score) " under par! You belong on the tour!"}}
+                                               else {if {<= (- score par) 5}
+                                                        then {println {++ "You shot " (- score par) " over par! Getting good!"}}
+                                                        else {if {<= (- score par) 10}
+                                                                 then {println {++ "You shot " (- score par) " over par... Get to the range"}}
+                                                                 else {if {<= (- score par) 15}
+                                                                          then {println {++ "You shot " (- score par) " over par... have you thought about tennis?"}}
+                                                                          else {println "You suck....."}}}}}}
+                                  {println ""}}}}]
+      {golf golf 1 0 0}}}}
+
+ }
+
+
+

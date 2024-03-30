@@ -1,0 +1,96 @@
+#lang racket
+;; this code defines the sim-OAZO5 language as a module
+(module sim-OAZO5 racket
+  (provide
+   [rename-out (#%lam-app #%app)
+               (my-if if)]
+   else
+   #%module-begin
+   #%datum
+   + - * / = equal? <= =>
+   true false)
+ 
+  (define-syntax (#%lam-app stx)
+    (syntax-case stx (anon)
+      [(_ anon (args ...) : body)
+       #'(lambda (args ...) body)]
+      [(_ e ...)
+       #'(#%app e ...)]))
+ 
+  (define-syntax (my-if stx)
+    (syntax-case stx (then else)
+      [(_ e1 then e2 else e3)
+       #'(if e1 e2 e3)])))
+ 
+;; this module uses the sim-OAZO5 language. That is, its
+;; contents are written *in* the sim-OAZO5 language.
+;; the only edits you should make are inside this module:
+(module my-mod1 (submod ".." sim-OAZO5)
+ 
+  1234
+ 
+  4567
+ 
+  {+ 4 5}
+ 
+  {if true then 34 else 39}
+ 
+  {{anon {x y} : {+ x y}} 4 3}
+ 
+  ;; exercise 0: write a function that adds one to a number.
+
+  {anon {x} : {+ x 1}}
+ 
+  ;; exercise 1: combining the definition and application forms,
+  ;; apply the function that adds one to a number to the number 17.
+
+  {{anon {x} : {+ x 1}} 17}
+ 
+  ;; thought exercise: does running this program "give a name to a value" anywhere?
+  ;; if so, what name and what value?
+
+  "It gives a the value 17 to x"
+ 
+  ;; exercise 2: write a function that accepts a function 'h' and applies
+  ;; it to 8.
+
+  {anon {h} : {h 8}}
+ 
+  ;; exercise 3: combining the definition and application forms,
+  ;; apply the function that applies its argument to 8 to the function
+  ;; that adds one to a number.
+
+  {{anon {h} : {h 8}} {anon {x} : {+ x 1}}}
+ 
+  ;; thought exercise: does running this program "give a name to a value"
+  ;; anywhere? if so, what name(s) and what value(s)?
+
+  "it gives the value 8 to x, and "
+ 
+  ;; exercise 4 (a bit harder): write a function that performs function composition:
+  ;; that is, it accepts functions named 'f' and 'g' and returns a new
+  ;; function of one argument that applies first 'g' and then 'f' to its
+  ;; argument
+
+  {anon {f g} : {anon {x} : {f {g x}}}}
+
+  {{{anon {f g} :
+          {anon {x} : {f {g x}}}} {anon {x} : {+ x 10}} {anon {x} : {* x 2}}} 10}
+ 
+  ;; exercise 5 (harder): Write a program that gives the name "compose" to
+  ;; the function defined in the previous exercise, gives the name "add1" to
+  ;; the function that adds one, and then gives the name "add2" to the composition
+  ;; of add1 and add1, and finally applies this add2 function to 99.
+
+  {{anon {compose add1} :
+         {{anon {add2} : {add2 99}}
+               {compose add1 add1}}}
+   {anon {f g} : {anon {x} : {f {g x}}}}
+   {anon {x} : {+ x 1}}}
+
+
+  )
+ 
+;; this code actually invokes the 'my-mod1 module, so that the
+;; code runs.
+(require 'my-mod1)

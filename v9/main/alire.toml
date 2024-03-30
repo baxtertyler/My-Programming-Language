@@ -1,0 +1,9 @@
+name = "main"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["Tyler Baxter"]
+maintainers = ["Tyler Baxter <tybaxter@calpoly.edu>"]
+maintainers-logins = ["baxtertyler"]
+
+executables = ["main"]
